@@ -3930,6 +3930,14 @@ elements.false_vacuum = {
                     pixelMap[x][y].generations = pixel.generations + 1
                 }
             }
+            let coords = rectCoords(pixel.x-2, pixel.y-2, pixel.x+2, pixel.y+2)
+            for (let coord of coords){
+                let x = coord.x
+                let y = coord.y
+                if (!isEmpty(x, y, true) && pixelMap[x][y].element != "false_vacuum"){
+                    deletePixel(x, y)
+                }
+            }
         }
         pixel.timeAlive ++;
         if (pixel.timeAlive > 20){
@@ -3938,7 +3946,8 @@ elements.false_vacuum = {
         }
     },
     movable: false,
-    hardness: 1
+    hardness: 1,
+    updateOrder: -Infinity
 }
 let signInput = "Hello World!";
 elements.sign = {
