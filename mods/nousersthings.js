@@ -2410,9 +2410,9 @@ elements.anchor = {
     color: "#020c20",
     category: "machines",
     behavior: behaviors.WALL,
-    desc: "Anchor; unpushable and unpullable by pistons.",
+    desc: "Anchor; can not be moved by anything.",
     onSelect: function(){
-        logMessage("Unpushable and unpullable by pistons.")
+        logMessage("Can not be moved by anything.")
     }
 }
 elements.piston_ray_emitter = {
@@ -3581,12 +3581,14 @@ elements.silica_gel = {
 if (!eLists.UNMOVABLE){eLists.UNMOVABLE = [];}
 eLists.UNMOVABLE.push("false_vacuum", "anchor")
 runAfterLoad(() => {
+    const newList = []
     for (_element in eLists.UNMOVABLE){
-        eLists.UNMOVABLE[_element] = elements[eLists.UNMOVABLE[_element]].id
+        newList[elements[eLists.UNMOVABLE].id] = true
     }
+    eLists.UNMOVABLE = newList
 })
 validateMoves((pixel, nx, ny) => {
-    if (eLists.UNMOVABLE.includes(elements[pixel.element].id)){
+    if (!eLists.UNMOVABLE[elements[pixel.element].id]){
         return false;
     }
 })
