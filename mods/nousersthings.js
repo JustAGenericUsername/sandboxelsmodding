@@ -3611,7 +3611,7 @@ elements.instant_wire = {
     tick: function(pixel){
         if (pixel.cooldown > 0){pixel.cooldown -= 1}
         if (pixel.cooldown < 4){pixel.iCharge = 0}
-        if (pixel.cooldown = 0){
+        if (pixel.cooldown == 0){
             for (let i of adjacentCoords){
                 let x = pixel.x + i[0]
                 let y = pixel.y + i[1]
