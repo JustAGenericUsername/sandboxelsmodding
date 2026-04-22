@@ -3657,3 +3657,23 @@ elements.instant_wire = {
     },
     updateOrder: 203847
 }
+elements.instant_wire_junction = {
+    color: "#00685a"
+    iConduct: 1,
+    behavior: behaviors.WALL,
+    category: "machines",
+    properties: {
+    },
+    iCharge: function(pixel, otherPixel){
+        let dir = [otherPixel.x-pixel.x, otherPixel.y-pixel.y]
+        if (!isEmpty(pixelMap[pixel.x-dir[0]][pixel.y-dir[1]])){
+            let spreadPixel = pixelMap[pixel.x-dir[0]][pixel.y-dir[1]]
+            if (elements[spreadPixel.element].iConduct && pixel.lastUpdate > spreadPixel.lastUpdate){
+                elements[spreadPixel.element].iCharge(spreadPixel, pixel)
+            }
+            if (elements[spreadPixel.element].conduct && !spreadPixel.chargeCD && !spreadPixel.charge){
+                chargePixel(spreadPixel)
+            }
+        }
+    }
+}
