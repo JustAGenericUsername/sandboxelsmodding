@@ -3663,6 +3663,7 @@ elements.instant_wire_junction = {
     behavior: behaviors.WALL,
     category: "machines",
     properties: {
+        lastUpdate: 0
     },
     iCharge: function(pixel, otherPixel){
         let dir = [otherPixel.x-pixel.x, otherPixel.y-pixel.y]
