@@ -3666,7 +3666,7 @@ elements.instant_wire_junction = {
     },
     iCharge: function(pixel, otherPixel){
         let dir = [otherPixel.x-pixel.x, otherPixel.y-pixel.y]
-        if (!isEmpty(pixelMap[pixel.x-dir[0]][pixel.y-dir[1]])){
+        if (!isEmpty(pixel.x-dir[0], pixel.y-dir[1], true)){
             let spreadPixel = pixelMap[pixel.x-dir[0]][pixel.y-dir[1]]
             if (elements[spreadPixel.element].iConduct && spreadPixel.lastUpdate < pixelTicks){
                 elements[spreadPixel.element].iCharge(spreadPixel, pixel)
