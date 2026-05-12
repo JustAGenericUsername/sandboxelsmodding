@@ -3598,7 +3598,7 @@ tryMove = function(...args){
 elements.instant_wire = {
     color: "#8ec7a2",
     behavior: behaviors.WALL,
-    category: "machines",
+    category: "instant machines",
     properties: {
         iCharge: 0,
         lastUpdate: 0,
@@ -3658,7 +3658,7 @@ elements.instant_wire_junction = {
     color: "#00685a",
     iConduct: 1,
     behavior: behaviors.WALL,
-    category: "machines",
+    category: "instant machines",
     properties: {
         lastUpdate: 0
     },
@@ -3680,7 +3680,7 @@ elements.iwifi_transmitter = {
     iConduct: 1,
     name: "iWiFi Transmitter",
     behavior: behaviors.WALL,
-    category: "machines",
+    category: "instant machines",
     properties: {lastUpdate:0},
     onSelect: async function(){
         let ans = await _nousersthingsprompt("What should the channel of this transmitter be?", 0)
@@ -3704,7 +3704,7 @@ elements.iwifi_receiver = {
     color: "#b4db6a",
     iConduct: 1,
     name: "iWiFi Receiver",
-    category: "machines",
+    category: "instant machines",
     behavior: behaviors.WALL,
     properties: {lastUpdate:0},
     onSelect: async function(){
