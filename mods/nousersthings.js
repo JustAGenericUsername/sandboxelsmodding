@@ -3595,20 +3595,11 @@ tryMove = function(...args){
         return oldTryMove.apply(undefined, args)
     }
 }
-elements.instant_wire = {
-    color: "#8ec7a2",
-    behavior: behaviors.WALL,
-    category: "instant machines",
-    properties: {
-        iCharge: 0,
-        lastUpdate: 0,
-        cooldown: 0
-    },
-    iConduct: 1,
-    tick: function(pixel){
-        if (pixel.cooldown > 0 && pixel.lastUpdate != pixelTicks){pixel.cooldown -= 1}
-        if (pixel.cooldown < 5){pixel.iCharge = 0}
-        if (pixel.cooldown == 0){
+const iCooldownTick = function(pixel, offTime){
+    if (pixel.cooldown > -30 && pixel.lastUpdate != pixelTicks){pixel.cooldown -= 1}
+    if (pixel.lastUpdate != pixelTicks){pixel.cooldown -= 1}
+        if (pixel.cooldown < offTime){pixel.iCharge = 0}
+        if (pixel.cooldown <= 0){
             for (let i in adjacentCoords){
                 let x = pixel.x + adjacentCoords[i][0]
                 let y = pixel.y + adjacentCoords[i][1]
@@ -3621,10 +3612,10 @@ elements.instant_wire = {
                 }
             }
         }
-    },
-    iCharge: function(pixel, otherPixel){
-        pixel.iCharge = 1
-        pixel.cooldown = 10
+}
+const iChargeCooldown = function(pixel, cooldown){
+    pixel.iCharge = 1
+        pixel.cooldown = cooldown
         pixel.lastUpdate = pixelTicks
         for (let i of adjacentCoords){
             let x = pixel.x + i[0]
@@ -3639,13 +3630,29 @@ elements.instant_wire = {
                 }
             }
         }
+}
+elements.instant_wire = {
+    color: "#8ec7a2",
+    behavior: behaviors.WALL,
+    category: "instant machines",
+    properties: {
+        iCharge: 0,
+        lastUpdate: 0,
+        cooldown: 0
+    },
+    iConduct: 1,
+    tick: function(pixel){
+        iCooldownTick(pixel, 2)
+    },
+    iCharge: function(pixel, otherPixel){
+        iChargeCooldown(pixel, 10)
     },
     renderer: function(pixel, ctx){
         let _rgb = getPixelColor(pixel.color);
         pixel.rgb=_rgb
         let _hsv = RGBtoHSV(parseInt(_rgb[0]), parseInt(_rgb[1]), parseInt(_rgb[2]))
         pixel.hsv=_hsv
-        if (!pixel.iCharge){_hsv.v = _hsv.v*0.3}
+        if (!pixel.iCharge){_hsv.v = _hsv.v*0.4}
         let _rgb2 = HSVtoRGB(_hsv.h, _hsv.s, _hsv.v)
         pixel.rgb2=_rgb2
         let _hex = RGBToHex([_rgb2.r, _rgb2.g, _rgb2.b])
@@ -3678,7 +3685,7 @@ elements.instant_wire_junction = {
 elements.iwifi_transmitter = {
     color: "#85ec8e",
     iConduct: 1,
-    name: "iWiFi Transmitter",
+    name: "i-WiFi Transmitter",
     behavior: behaviors.WALL,
     category: "instant machines",
     properties: {lastUpdate:0},
@@ -3688,7 +3695,11 @@ elements.iwifi_transmitter = {
             currentElementProp = {channel:ans}
         }
     },
+    tick: function(pixel){
+        iCooldownTick(pixel, 0)
+    },
     iCharge: function(pixel, otherPixel){
+        iChargeCooldown(pixel, 4)
         let wifipixels = currentPixels.filter(function(pixelToCheck) {
             if (pixelToCheck.element == "iwifi_receiver" && pixelToCheck.channel === pixel.channel && pixelToCheck.lastUpdate < pixelTicks){
                 return true;
@@ -3703,7 +3714,7 @@ elements.iwifi_transmitter = {
 elements.iwifi_receiver = {
     color: "#b4db6a",
     iConduct: 1,
-    name: "iWiFi Receiver",
+    name: "i-WiFi Receiver",
     category: "instant machines",
     behavior: behaviors.WALL,
     properties: {lastUpdate:0},
@@ -3729,4 +3740,30 @@ elements.iwifi_receiver = {
             }
         }
     }
+}
+elements.ilamp = {
+    color: "#ff0000",
+    iConduct: 1,
+    name: "i-Lamp",
+    behavior: behaviors.WALL,
+    properties: {lastUpdate: 0, cooldown: 0},
+    grain: 0,
+    tick: function(pixel){
+        iCooldownTick(pixel, 0)
+    },
+    iCharge: function(pixel, otherPixel){
+        iChargeCooldown(pixel, 10)
+    },
+    renderer: function(pixel, ctx){
+        let _rgb = getPixelColor(pixel.color);
+        pixel.rgb=_rgb
+        let _hsv = RGBtoHSV(parseInt(_rgb[0]), parseInt(_rgb[1]), parseInt(_rgb[2]))
+        pixel.hsv=_hsv
+        if (!pixel.iCharge){_hsv.v = _hsv.v*0.2}
+        let _rgb2 = HSVtoRGB(_hsv.h, _hsv.s, _hsv.v)
+        pixel.rgb2=_rgb2
+        let _hex = RGBToHex([_rgb2.r, _rgb2.g, _rgb2.b])
+        pixel.hex=_hex
+        drawSquare(ctx, _hex, pixel.x, pixel.y)
+    },
 }
