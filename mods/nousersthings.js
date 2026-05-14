@@ -3597,7 +3597,7 @@ tryMove = function(...args){
 }
 const iCooldownTick = function(pixel, offTime){
     if (pixel.cooldown > -30 && pixel.lastUpdate != pixelTicks){pixel.cooldown -= 1}
-    if (pixel.cooldown < offTime){pixel.iCharge = 0}
+    if (pixel.cooldown < offTime){pixel.iCharge = 0} else {pixel.iCharge = 1}
     if (pixel.cooldown <= 0){
         for (let i in adjacentCoords){
             let x = pixel.x + adjacentCoords[i][0]
@@ -3726,6 +3726,7 @@ elements.iwifi_receiver = {
 elements.ilamp = {
     color: "#ff0000",
     iConduct: 1,
+    customColor: true,
     name: "i-Lamp",
     category: "instant machines",
     behavior: behaviors.WALL,
@@ -3745,4 +3746,32 @@ elements.ilamp = {
         let _hex = RGBToHex([_rgb2.r, _rgb2.g, _rgb2.b])
         drawSquare(ctx, _hex, pixel.x, pixel.y)
     },
+}
+elements.iswitch = {
+    color: "#cd70e4",
+    iConduct: 1,
+    name: "i-Switch",
+    category: "instant machines",
+    onSelect: () => {logMessage("Only works for conducting straight across.")},
+    behavior: behaviors.WALL,
+    properties: {lastUpdate: 0, cooldown: 1, dir: [0, 0], iCharge:0},
+    tick: function(pixel){
+        pixel.lastUpdate = pixelTicks
+        let x = pixel.x - pixel.dir[0]
+        let y = pixel.y - pixel.dir[1]
+        if (!isEmpty(x, y, true)){
+            let spreadPixel = pixelMap[x][y]
+            if (elements[spreadPixel.element].iConduct && pixel.lastUpdate > spreadPixel.lastUpdate && spreadPixel.cooldown <= 0){
+                elements[spreadPixel.element].iCharge(spreadPixel, pixel)
+            }
+            if (elements[spreadPixel.element].conduct && !spreadPixel.chargeCD && !spreadPixel.charge){
+                chargePixel(spreadPixel)
+            }
+        }
+    },
+    iCharge: function(pixel, otherPixel){
+        if (pixel.dir[0] != 0 || pixel.dir[1] != 0 && otherPixel.x-pixel.x !== pixel.dir[0] && otherPixel.y-pixel.y !== pixel.dir[1]){return;}
+        pixel.dir = [otherPixel.x-pixel.x, otherPixel.y-pixel.y]
+        elements[pixel.element].tick(pixel)
+    }
 }
