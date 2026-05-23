@@ -3881,7 +3881,7 @@ elements.heat_pipe = {
 						}
 					}
 					else if (!pixel.cont && !elements[newPixel.element].insulate) { //suck up pixel
-						pixel.cont = (newPixel.temp - Math.max(newPixel.temp-(typeof pixel.packetSize != "undefined" ? pixel.packetSize : 5), (typeof pixel.cutoff != "undefined" ? pixel.cutoff : settings.abszero)));
+						pixel.cont = (newPixel.temp - Math.max(newPixel.temp-(typeof pixel.packetSize != "undefined" ? pixel.packetSize : 5), (typeof pixel.cutoff != "undefined" ? pixel.cutoff : currentSaveData.abszero)));
                         if (!pixel.mode && pixel.cont < 0){pixel.cont = null; break;}
                         if (pixel.mode < 0){pixel.cont = null; break;}
                         if (Math.round(3*Math.abs(pixel.cont)) < 1){pixel.cont = null; break;}
